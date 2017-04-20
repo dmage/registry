@@ -25,9 +25,10 @@ type Client struct {
 	creds      auth.CredentialStore
 	transport  http.RoundTripper
 	httpClient *http.Client
+	insecure   bool
 }
 
-func New(host string, creds auth.CredentialStore, transport http.RoundTripper) *Client {
+func New(host string, creds auth.CredentialStore, transport http.RoundTripper, insecure bool) *Client {
 	return &Client{
 		host:      host,
 		creds:     creds,
@@ -35,12 +36,17 @@ func New(host string, creds auth.CredentialStore, transport http.RoundTripper) *
 		httpClient: &http.Client{
 			Transport: transport,
 		},
+		insecure: insecure,
 	}
 }
 
 func (c *Client) uri(format string, a ...interface{}) *url.URL {
+	scheme := "https"
+	if c.insecure {
+		scheme = "http"
+	}
 	return &url.URL{
-		Scheme: "https",
+		Scheme: scheme,
 		Host:   c.host,
 		Path:   fmt.Sprintf(format, a...),
 	}

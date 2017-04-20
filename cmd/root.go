@@ -48,12 +48,14 @@ func Execute() {
 }
 
 var rootCmdHost string
+var rootCmdInsecure bool
 var rootCmdUser string
 var rootCmdPassword string
 var rootCmdVerbose bool
 
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&rootCmdHost, "host", "H", "index.docker.io", "use the specified Docker Registry")
+	RootCmd.PersistentFlags().BoolVar(&rootCmdInsecure, "insecure", false, "send requests using http")
 	RootCmd.PersistentFlags().StringVarP(&rootCmdUser, "user", "u", "", "use the specified username")
 	RootCmd.PersistentFlags().StringVarP(&rootCmdPassword, "password", "p", "", "use the specified password")
 	RootCmd.PersistentFlags().BoolVarP(&rootCmdVerbose, "verbose", "v", false, "print http requests")
@@ -73,5 +75,5 @@ func newClient() *client.Client {
 		transport = &httplog.RoundTripper{}
 	}
 
-	return client.New(rootCmdHost, creds, transport)
+	return client.New(rootCmdHost, creds, transport, rootCmdInsecure)
 }
