@@ -99,13 +99,9 @@ func (c *Client) Token(scope string) (string, error) {
 		return "", fmt.Errorf("no realm parameter in the challenge")
 	}
 
-	service, ok := challenge.Parameters["service"]
-	if !ok {
-		return "", fmt.Errorf("no service parameter in the challenge")
-	}
-
-	params := url.Values{
-		"service": {service},
+	params := url.Values{}
+	if service, ok := challenge.Parameters["service"]; ok {
+		params["service"] = []string{service}
 	}
 	if scope != "" {
 		params["scope"] = []string{scope}
